@@ -12,6 +12,55 @@ namespace Jazz2Randomizer
         static Process process;
         static IntPtr basePointer;
 
+        static int curLevelPointer = 0x1F3884;
+        static int nextLevelPointer = 0x14D5D3;
+        static int worldPointer = 0x17B3E0;
+
+        // Random levels
+        static Random rng = new Random();
+        static string[] levels;
+        static int levelIndex;
+
+        // Lists to randomize
+        static string[] bustAmove = new string[] {
+            "BUST A MOVE",
+            "BuSt A mOvE",
+            "BUSTER WOLF",
+            "BUS A MOUSE",
+            "MOVE A BUST",
+            "AAAAAAAAAAA",
+            "GO GO GO!",
+            "3, 2, 1, GO",
+            "MOVE IT OUT",
+            "STOP",
+            "GO LEFT",
+            "WRONG WAY",
+            "BUST A BUST",
+            "EVOM A TSUB"
+        };
+        static string[] ep1to4Levels = new string[] {
+            "trainer", "castle1", "castle1n", "carrot1", "carrot1n", "labrat1", "labrat2",
+            "colon1", "colon2", "psych1", "psych2", "beach", "beach2",
+            "diam1", "diam3", "tube1", "tube2", "medivo1", "medivo2",
+            "jung1", "jung2", "hell", "hell2", "damn", "damn2"
+        };
+        static string[] tsfLevels = new string[] {
+            "easter1", "easter2", "easter3",
+            "haunted1", "haunted2","haunted3",
+            "town1", "town2", "town3"
+        };
+        static string[] demoLevels = new string[] {
+            "share1", "share2", "share3"
+        };
+        static string[] ccLevels = new string[] {
+            "xmas1", "xmas2", "xmas3"
+        };
+        static short[] chars = new short[] {
+            55,
+            89,
+            61
+        };
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -44,8 +93,15 @@ namespace Jazz2Randomizer
             Write(basePointer + 0x3FD49, functionPointer - (int)(basePointer + 0x3FD49) - 4);
             Console.WriteLine("Code injected successfully");
 
+            // Best var names
+            string previousCurrentLevel = "";
+            string previousNextLevel = "";
+
             while (!process.HasExited)
             {
+                //--------------//
+                //  Load Check  //
+                //--------------//
                 Read(loadPointer, out int loadValue);
                 if (loadValue == 1)
                 {
@@ -55,9 +111,94 @@ namespace Jazz2Randomizer
                     Write(loadPointer, 0);
                     Console.WriteLine("Continue game");
                 }
+
+                //---------------------//
+                //  Set up next level  //
+                //---------------------//
+
+                // Check current level
+                byte[] lev = new byte[16];
+                Read(basePointer + curLevelPointer, lev);
+                string levStr = stripJunk(Encoding.ASCII.GetString(lev));
+                if (previousCurrentLevel != levStr && (previousCurrentLevel + ".j2l") != levStr)
+                {
+                    // Current level has changed, either we went to a
+                    // new level or we chose an episode from the menu
+                    // Check if we're currently on the menu
+                    byte[] world = new byte[12];
+                    Read(basePointer + worldPointer, world);
+                    string worldStr = stripJunk(Encoding.ASCII.GetString(world));
+                    if (worldStr == "MENU")
+                    {
+                        // We're on the menu, initialize randomness
+                        randomizeLevels();
+                        Write(basePointer + curLevelPointer, levels[levelIndex], 16);
+                        // Clear the next level, so we always know it'll change upon starting the first level
+                        // okay so setting empty string here somehow makes it get 'x' for the nextLevStr value later so...I dunno
+                        Write(basePointer + nextLevelPointer, "start", 16);
+                        // If we don't set this then we'll end up randomizing again because we changed the value
+                        levStr = levels[levelIndex];
+
+                        Debug.WriteLine("Setting next level: " + levels[levelIndex] + " index=" + levelIndex);
+                        levelIndex++;
+                    }
+                }
+                previousCurrentLevel = levStr;
+
+                // Check next level
+                byte[] nextLev = new byte[16];
+                Read(basePointer + nextLevelPointer, nextLev);
+                string nextLevStr = stripJunk(Encoding.ASCII.GetString(nextLev));
+                if(nextLevStr != "start" && previousNextLevel != nextLevStr)
+                {
+                    // The next level has changed, We've loaded a different level. Set the next level
+                    nextLevStr = nextLevel();
+                }
+                previousNextLevel = nextLevStr;
+
+                //----------//
+                //  ZZZ...  //
+                //----------//
                 Thread.Sleep(10);
             }
             Console.WriteLine("Game exited");
+        }
+
+        static void randomizeLevels()
+        {
+            Console.WriteLine("Randomizing level order...");
+            // Randomize the levels
+            List<string> levelList = new List<string>();
+            //levelList.AddRange(ep1to4Levels);
+            //levelList.AddRange(tsfLevels);
+            levelList.AddRange(demoLevels);
+            //levelList.AddRange(ccLevels);
+            string[] levelNames = levelList.ToArray();
+
+            // I'm not this smart, I stole this from https://stackoverflow.com/a/108836
+            levels = levelNames.OrderBy(x => rng.Next()).ToArray();
+            Debug.WriteLine("Randomized levels:");
+            for (int i = 0; i < levels.Length; i++)
+            {
+                Debug.WriteLine(levels[i]);
+            }
+            // Reset the level index
+            levelIndex = 0;
+        }
+
+        static string nextLevel()
+        {
+            string next = "ending";
+            if (levelIndex < levels.Length)
+            {
+                // Still levels to play, set the next one
+                next = levels[levelIndex];
+                levelIndex++;
+            }
+            // We're already in game, just set the next level
+            Write(basePointer + nextLevelPointer, next, 16);
+            Debug.WriteLine("Setting next level: " + next + " index=" + (levelIndex-1));
+            return next;
         }
 
         static void OnLoadLevel()
@@ -92,18 +233,38 @@ namespace Jazz2Randomizer
             }
         }
 
+        static string stripJunk(string str)
+        {
+            // Strip out any junk characters
+            // taken from https://stackoverflow.com/a/15150427
+            return new string(str.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '.').ToArray());
+        }
+
+        //--------//
+        //  Read  //
+        //--------//
         static void Read(IntPtr address, int[] data) => WinApi.ReadProcessMemory(process.Handle, address, data, data.Length * 4, out int bytesRead);
 
         static void Read(IntPtr address, out IntPtr data) => WinApi.ReadProcessMemory(process.Handle, address, out data, 4, out int bytesRead);
 
         static void Read(IntPtr address, out int data) => WinApi.ReadProcessMemory(process.Handle, address, out data, 4, out int bytesRead);
 
+        static void Read(IntPtr address, byte[] data) => WinApi.ReadProcessMemory(process.Handle, address, data, data.Length, out int bytesRead);
+
+        //---------//
+        //  Write  //
+        //---------//
         static void Write(IntPtr address, params byte[] data) => WinApi.WriteProcessMemory(process.Handle, address, data, data.Length, out int bytesWritten);
 
         static void Write(IntPtr address, int data) => Write(address, BitConverter.GetBytes(data));
 
         static void Write(IntPtr address, IntPtr data) => Write(address, (int)data);
 
+        static void Write(IntPtr address, string data, int len) => WinApi.WriteProcessMemory(process.Handle, address, Encoding.ASCII.GetBytes(data), len, out int bytesWritten);
+
+        //---------//
+        //  Alloc  //
+        //---------//
         static IntPtr Allocate(params byte[] data)
         {
             var address = WinApi.VirtualAllocEx(process.Handle, IntPtr.Zero, data.Length, 0x1000, 0x40);
