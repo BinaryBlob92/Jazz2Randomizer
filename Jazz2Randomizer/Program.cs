@@ -15,63 +15,9 @@ namespace Jazz2Randomizer
         static IntPtr basePointer;
         static Random rng;
 
-        static int[] ammoEvents = new int[] { 33, 34, 35, 36, 37, 38, 39, 40 };
-        static int[] enemyEvents = new int[] { 100, 102, 103, 104, 105, 106, 107, 108, 109, 110, 113, 115, 116, 117, 118, 120, 123, 124, 125, 126, 127, 152, 183, 184, 190, 191, 196, 197, 198, 225, 236, 237, 248, 249, 250, 251, 252 };
-        static int[] bossEvents = new int[] { 101, 114, 151, 195, 199, 200, 201, 202, 235, 241, 247 };
-        static short[] characters = new short[] { 55, 89, 61 };
-        static string[] songs;
-        static string[] levels;
-        static int nextLevelIndex;
-        static string[][] episodes = new string[][]
-            {
-                new string[] {
-                    "easter1.j2l",
-                    "easter2.j2l",
-                    "easter3.j2l",
-                    "haunted1.j2l",
-                    "haunted2.j2l",
-                    "haunted3.j2l",
-                    "town1.j2l",
-                    "town2.j2l",
-                    "town3.j2l",
-                },
-                new string[] {
-                    "castle1.j2l",
-                    "castle1n.j2l",
-                    "carrot1.j2l",
-                    "carrot1n.j2l",
-                    "labrat1.j2l",
-                    "labrat2.j2l",
-                    "colon1.j2l",
-                    "colon2.j2l",
-                    "psych1.j2l",
-                    "psych2.j2l",
-                    "beach.j2l",
-                    "beach2.j2l",
-                    "diam1.j2l",
-                    "diam3.j2l",
-                    "tube1.j2l",
-                    "tube2.j2l",
-                    "medivo1.j2l",
-                    "medivo2.j2l",
-                    "jung1.j2l",
-                    "jung2.j2l",
-                    "hell.j2l",
-                    "hell2.j2l",
-                    "damn.j2l",
-                    "damn2.j2l",
-                },
-                new string[] {
-                    "share1.j2l",
-                    "share2.j2l",
-                    "share3.j2l",
-                },
-                new string[] {
-                    "xmas1.j2l",
-                    "xmas2.j2l",
-                    "xmas3.j2l",
-                },
-            };
+        static LevelInfo[][] episodes;
+        static LevelInfo[] levels;
+        static string startLevel;
 
         [STAThread]
         static void Main(string[] args)
@@ -98,23 +44,17 @@ namespace Jazz2Randomizer
                 }
             }
 
+            Console.WriteLine("Looking for Jazz2 process...");
             while (process == null || process.HasExited)
             {
-                Console.WriteLine("Looking for Jazz2 process...");
                 process = Process.GetProcessesByName("jazz2").FirstOrDefault();
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
             Console.WriteLine("Jazz2 process found");
             process.WaitForInputIdle();
 
-            nextLevelIndex = 0;
             basePointer = process.MainModule.BaseAddress;
-            songs = Directory.GetFiles(Path.GetDirectoryName(process.MainModule.FileName), "*.j2b")
-                .Select(x => Path.GetFileNameWithoutExtension(x))
-                .ToArray();
-
-            for (int i = 0; i < episodes.Length; i++)
-                episodes[i] = episodes[i].OrderBy(x => rng.Next()).ToArray();
+            episodes = LevelInfo.GetLevelInfos(rng, Path.GetDirectoryName(process.MainModule.FileName));
 
             var loadPointer = Allocate(0x00, 0x00, 0x00, 0x00);
             var functionPointer = Allocate(
@@ -137,62 +77,57 @@ namespace Jazz2Randomizer
 
             while (!process.HasExited)
             {
-                if (nextLevelIndex == 0)
+                Read(basePointer + 0x1F3884, out string newLevel, 32);
+                if (newLevel.ToUpper() == newLevel && startLevel != newLevel)
                 {
-                    Read(basePointer + 0x1F3884, out string level, 32);
-                    level = level.ToLower();
-                    levels = episodes.FirstOrDefault(x => x.Contains(level));
-
-                    if (levels != null && levels.Length > 0 && level != levels[0])
-                        Write(basePointer + 0x1F3884, levels[0].ToUpper(), 32);
+                    startLevel = newLevel;
+                    if (LevelInfo.GetLevelIndex(newLevel, out int episodeIndex, out int levelindex))
+                    {
+                        levels = episodes[episodeIndex];
+                        startLevel = levels[levelindex].Level.ToUpper();
+                    }
+                    Write(basePointer + 0x1F3884, startLevel, 32);
                 }
 
                 Read(loadPointer, out int loadValue);
                 if (loadValue == 1)
                 {
-                    Console.WriteLine("Calling OnLoadLevel");
                     OnLoadLevel();
-                    Console.WriteLine("OnLoadLevel finished");
                     Write(loadPointer, 0);
-                    Console.WriteLine("Continue game");
                 }
-                Thread.Sleep(10);
+                Thread.Sleep(5);
             }
-            Console.WriteLine("Game exited");
         }
 
         static void OnLoadLevel()
         {
-            Read(basePointer + 0x1191D4, out IntPtr eventsPointer);
-            Read(eventsPointer, out eventsPointer);
-            Read(basePointer + 0x10F14C, out int width);
-            Read(basePointer + 0x1191AC, out int height);
+            Read(basePointer + 0x1F3884, out string levelName, 32);
+            levelName = levelName.ToLower();
 
-            var lookup = new Dictionary<int, int>();
-            var events = new int[width * height];
-            Read(eventsPointer, events);
+            var level = episodes
+                .SelectMany(x => x)
+                .FirstOrDefault(x => x.Level == levelName);
 
-            foreach (var ammoEvent in ammoEvents)
-                lookup[ammoEvent] = ammoEvents[rng.Next(ammoEvents.Length)];
-
-            foreach (var enemyEvent in enemyEvents)
-                lookup[enemyEvent] = enemyEvents[rng.Next(enemyEvents.Length)];
-
-            foreach (var bossEvent in bossEvents)
-                lookup[bossEvent] = bossEvents[rng.Next(bossEvents.Length)];
-
-            for (int i = 0; i < events.Length; i++)
+            if (level != null)
             {
-                if (lookup.TryGetValue(events[i] & 0xFF, out int newEvent))
-                    Write(eventsPointer + (i * 4), newEvent);
+                Read(basePointer + 0x1191D4, out IntPtr eventsPointer);
+                Read(eventsPointer, out eventsPointer);
+                Read(basePointer + 0x10F14C, out int width);
+                Read(basePointer + 0x1191AC, out int height);
+
+                var events = new int[width * height];
+                Read(eventsPointer, events);
+
+                for (int i = 0; i < events.Length; i++)
+                {
+                    if (level.EventLookup.TryGetValue(events[i] & 0xFF, out int newEvent))
+                        Write(eventsPointer + (i * 4), newEvent);
+                }
+
+                Write(basePointer + 0x1C89E0, level.Character);
+                Write(basePointer + 0x14D613, level.Song, 32);
+                Write(basePointer + 0x14D5D3, level.NextLevel, 32);
             }
-
-            Write(basePointer + 0x1C89E0, characters[rng.Next(characters.Length)]);
-            Write(basePointer + 0x14D613, songs[rng.Next(songs.Length)], 32);
-
-            nextLevelIndex++;
-            if (levels != null)
-                Write(basePointer + 0x14D5D3, nextLevelIndex < levels.Length ? levels[nextLevelIndex] : "ending", 32);
         }
 
         static void Read(IntPtr address, int[] data) => WinApi.ReadProcessMemory(process.Handle, address, data, data.Length * 4, out int bytesRead);
@@ -207,7 +142,8 @@ namespace Jazz2Randomizer
         {
             var bytes = new byte[count];
             Read(address, bytes);
-            data = Encoding.ASCII.GetString(bytes).TrimEnd('\0');
+            bytes = bytes.TakeWhile(x => x > 0).ToArray();
+            data = Encoding.ASCII.GetString(bytes);
         }
 
         static void Write(IntPtr address, params byte[] data) => WinApi.WriteProcessMemory(process.Handle, address, data, data.Length, out int bytesWritten);
