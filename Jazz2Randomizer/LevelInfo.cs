@@ -57,16 +57,55 @@ namespace Jazz2Randomizer
                 "xmas3.j2l",
             },
         };
-        public static int[][] eventGroups = new int[][]
+        static int[][] eventGroups = new int[][]
         {
             // Ammo
             new int[] { 33, 34, 35, 36, 37, 38, 39, 40 },
             // Énemies
             new int[] { 100, 102, 103, 104, 105, 106, 107, 108, 109, 110, 113, 115, 116, 117, 118, 120, 123, 124, 125, 126, 127, 152, 183, 184, 190, 191, 196, 197, 237, 248, 249, 250, 252 },
             // Bosses
-            new int[] { 101, 114, 151, 195, 199, 200, 202, 235, 247 },
+            new int[] { 101, 114, 151, 195, 199, 200, 202, 235 },
+            // Foods
+            new int[] { 141, 142, 143, 144, 145, 146, 147, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182 },
+            // Crates
+            new int[]
+            {
+                131, 132, 133, 134, 135, 136, 219, 220, 221, // Power ups
+                74, 75, 76, // Shields
+                71, 94, // Morphs
+                46, 53, 54, 55, 56, 57, 69, // Ammo
+                47, 48, 50, 51, 52, // Goodies
+                49, 70, // Gem
+            },
         };
-        static string[] songs;
+
+        static string[] songs = new string[]
+        {
+            "Beach.j2b",
+            "Bonus2.j2b",
+            "Bonus3.j2b",
+            "Boss1.j2b",
+            "Boss2.j2b",
+            "Carrotus.j2b",
+            "Castle.j2b",
+            "Colony.j2b",
+            "Dang.j2b",
+            "Diamond.j2b",
+            "Ending.j2b",
+            "Fastrack.j2b",
+            "Freeze.j2b",
+            "Funkyg.j2b",
+            "Hell.j2b",
+            "Intro.j2b",
+            "Jungle.j2b",
+            "Labrat.j2b",
+            "Medivo2.j2b",
+            "Menu.j2b",
+            "Order.j2b",
+            "Tubelec.j2b",
+            "Water.j2b",
+            "Whare.j2b",
+        };
         static short[] characters = new short[] { 55, 89, 61 };
 
         public string Level { get; set; }
@@ -75,39 +114,34 @@ namespace Jazz2Randomizer
         public short Character { get; set; }
         public Dictionary<int, int> EventLookup { get; set; }
 
-        static int index = 0;
-
-        public LevelInfo(string level, string nextLevel, Random rng)
+        public static LevelInfo[][] GetLevelInfos(Random rng)
         {
-            Level = level;
-            NextLevel = nextLevel;
-            Song = songs[rng.Next(songs.Length)];
-            Character = characters[rng.Next(characters.Length)];
-            EventLookup = new Dictionary<int, int>();
-
-            foreach (var eventGroup in eventGroups)
-            {
-                foreach (var eventId in eventGroup)
-                    EventLookup[eventId] = eventGroup[rng.Next(eventGroup.Length)];
-            }
-        }
-
-        public static LevelInfo[][] GetLevelInfos(Random rng, string path)
-        {
-            songs = Directory.GetFiles(path)
-                .Where(x => x.EndsWith(".j2b", true, null) || x.EndsWith(".it", true, null))
-                .Select(x => Path.GetFileName(x))
-                .ToArray();
-
             var output = new LevelInfo[episodes.Length][];
             for (int i = 0; i < output.Length; i++)
             {
-                var levelOrder = episodes[i].OrderBy(x => rng.Next()).ToArray();
-                output[i] = new LevelInfo[levelOrder.Length];
-                for (int n = 0; n< levelOrder.Length; n++)
+                var levelNames = episodes[i].OrderBy(x => rng.Next()).ToArray();
+                var songNames = songs.OrderBy(x => rng.Next()).ToArray();
+                output[i] = new LevelInfo[levelNames.Length];
+                for (int n = 0; n< levelNames.Length; n++)
                 {
-                    var nextLevel = n + 1 < levelOrder.Length ? levelOrder[n + 1] : "ending";
-                    output[i][n] = new LevelInfo(levelOrder[n], nextLevel, rng);
+                    var levelInfo = new LevelInfo();
+                    levelInfo.Level = levelNames[n];
+                    levelInfo.NextLevel = n + 1 < levelNames.Length ? levelNames[n + 1] : "ending";
+                    levelInfo.Song = songNames[n % songNames.Length];
+                    levelInfo.Character = characters[rng.Next(characters.Length)];
+                    levelInfo.EventLookup = new Dictionary<int, int>();
+
+                    foreach (var eventGroup in eventGroups)
+                    {
+                        var shuffledEvents = eventGroup
+                            .OrderBy(x => rng.Next())
+                            .ToArray();
+
+                        for (int q = 0; q < shuffledEvents.Length; q++)
+                            levelInfo.EventLookup[eventGroup[q]] = shuffledEvents[q];
+                    }
+
+                    output[i][n] = levelInfo;
                 }
             }
             return output;
