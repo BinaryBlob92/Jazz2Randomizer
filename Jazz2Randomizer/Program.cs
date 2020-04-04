@@ -359,8 +359,8 @@ namespace Jazz2Randomizer
                 0xC3                                        // ret
             );
             Jazz2.Write(functionPointer + 3, (int)loadPointer);
-            Jazz2.Write(functionPointer + 25, (int)Jazz2.Address + 0x8F0C0 - (int)(functionPointer + 25) - 4);
-            Jazz2.Write(Jazz2.Address + 0x3FD49, (int)functionPointer - (int)(Jazz2.Address + 0x3FD49) - 4);
+            Jazz2.Write(functionPointer + 25, Jazz2.Address + 0x8F0C0);
+            Jazz2.Write(Jazz2.Address + 0x3FD49, functionPointer);
             Console.WriteLine("Code injected successfully");
 
             while (Jazz2.IsRunning())

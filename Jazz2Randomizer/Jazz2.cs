@@ -28,6 +28,8 @@ namespace Jazz2Randomizer
 
         public static void Write(IntPtr address, int data) => Write(address, BitConverter.GetBytes(data));
 
+        public static void Write(IntPtr address, IntPtr data, bool relative = true) => Write(address, BitConverter.GetBytes(relative ? (int)data - (int)address - 4 : (int)data));
+
         public static void Write(IntPtr address, short data) => Write(address, BitConverter.GetBytes(data));
 
         public static void Write(IntPtr address, string data, int count) => Write(address, Encoding.ASCII.GetBytes(data.PadRight(count, '\0')));
