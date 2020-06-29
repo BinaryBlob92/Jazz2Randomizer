@@ -22,6 +22,7 @@ namespace Jazz2Randomizer
             checkBoxLori.DataBindings.Add("Checked", levelSettings, "Lori");
             checkBoxFrog.DataBindings.Add("Checked", levelSettings, "Frog");
             checkBoxBird.DataBindings.Add("Checked", levelSettings, "Bird");
+            checkBoxRandomzieColors.DataBindings.Add("Checked", levelSettings, "RandomizeColors");
             dataGridViewEventGroups.AutoGenerateColumns = false;
             dataGridViewEventGroups.DataSource = new BindingList<EventGroup>(levelSettings.EventGroups);
             ColumnFromDifficulty.DataSource = Enum.GetValues(typeof(Difficulty));

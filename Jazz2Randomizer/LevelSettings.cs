@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -21,10 +22,13 @@ namespace Jazz2Randomizer
         [DataMember(Order = 5)]
         public bool Bird { get; set; }
         [DataMember(Order = 6)]
+        public bool RandomizeColors { get; set; }
+        [DataMember(Order = 7)]
         public List<EventGroup> EventGroups { get; set; }
 
         private int character;
         private int[] events;
+        private int[] bitShifts;
 
         public LevelSettings()
         {
@@ -37,6 +41,7 @@ namespace Jazz2Randomizer
         public void Reset()
         {
             events = null;
+            bitShifts = null;
         }
 
         public void OnLoadLevel(Jazz2 jazz2, Random rng)
@@ -88,6 +93,31 @@ namespace Jazz2Randomizer
             jazz2.Write(eventsPointer, events);
             jazz2.Write(jazz2.Address + 0x1C89E0, character);
             //jazz2.Write(jazz2.Address + 0x14D613, song, 32);
+        }
+
+        public void OnLoadTilset(Jazz2 jazz2, Random rng)
+        {
+            if (RandomizeColors)
+            {
+                if (bitShifts == null)
+                {
+                    bitShifts = Enumerable.Range(0, 3)
+                        .Select(x => 8 * x)
+                        .OrderBy(x => rng.Next())
+                        .ToArray();
+                }
+
+                int[] colors = new int[256];
+                jazz2.Read(jazz2.Address + 0x1607A0, colors);
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    var r = colors[i] & 0xFF;
+                    var g = (colors[i] >> 8) & 0xFF;
+                    var b = (colors[i] >> 16) & 0xFF;
+                    colors[i] = r << bitShifts[0] | g << bitShifts[1] | b << bitShifts[2];
+                }
+                jazz2.Write(jazz2.Address + 0x1607A0, colors);
+            }
         }
     }
 }

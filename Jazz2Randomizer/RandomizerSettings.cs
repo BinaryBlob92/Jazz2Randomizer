@@ -114,49 +114,11 @@ namespace Jazz2Randomizer
 
         public void OnLoadTileset(Jazz2 jazz2)
         {
-            int[] colors = new int[256];
-            jazz2.Read(jazz2.Address + 0x1607A0, colors);
-            for (int i = 0; i < colors.Length; i++)
-            {
-                ColorToHSV(Color.FromArgb(colors[i]), out double hue, out double saturation, out double value);
-                colors[i] = ColorFromHSV(hue + 180, saturation, value).ToArgb();
-            }
-            jazz2.Write(jazz2.Address + 0x1607A0, colors);
-        }
+            jazz2.Read(jazz2.Address + 0x1F3884, out string levelName, 32);
+            var levelIndex = Array.IndexOf(LevelOrder, levelName.ToLower());
 
-        public static void ColorToHSV(Color color, out double hue, out double saturation, out double value)
-        {
-            int max = Math.Max(color.R, Math.Max(color.G, color.B));
-            int min = Math.Min(color.R, Math.Min(color.G, color.B));
-
-            hue = color.GetHue();
-            saturation = (max == 0) ? 0 : 1d - (1d * min / max);
-            value = max / 255d;
-        }
-
-        public static Color ColorFromHSV(double hue, double saturation, double value)
-        {
-            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
-            double f = hue / 60 - Math.Floor(hue / 60);
-
-            value = value * 255;
-            int v = Convert.ToInt32(value);
-            int p = Convert.ToInt32(value * (1 - saturation));
-            int q = Convert.ToInt32(value * (1 - f * saturation));
-            int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
-
-            if (hi == 0)
-                return Color.FromArgb(255, v, t, p);
-            else if (hi == 1)
-                return Color.FromArgb(255, q, v, p);
-            else if (hi == 2)
-                return Color.FromArgb(255, p, v, t);
-            else if (hi == 3)
-                return Color.FromArgb(255, p, q, v);
-            else if (hi == 4)
-                return Color.FromArgb(255, t, p, v);
-            else
-                return Color.FromArgb(255, v, p, q);
+            if (levelIndex >= 0 && levelIndex < LevelSettings.Count)
+                LevelSettings[levelIndex].OnLoadTilset(jazz2, rng);
         }
     }
 }

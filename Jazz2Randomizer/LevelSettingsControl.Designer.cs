@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.labelRandomizeColors = new System.Windows.Forms.Label();
             this.labelLevelFilename = new System.Windows.Forms.Label();
             this.textBoxLevelFilename = new System.Windows.Forms.TextBox();
             this.labelCharacters = new System.Windows.Forms.Label();
@@ -59,6 +60,9 @@
             this.toolStripEventsTo = new System.Windows.Forms.ToolStrip();
             this.toolStripDropDownButtonAddToEvent = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripButtonDeleteToEvent = new System.Windows.Forms.ToolStripButton();
+            this.splitter = new System.Windows.Forms.Splitter();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.checkBoxRandomzieColors = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel.SuspendLayout();
             this.panelCharacters.SuspendLayout();
             this.groupBoxEventGroups.SuspendLayout();
@@ -70,73 +74,80 @@
             this.groupBoxEventsTo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewEventsTo)).BeginInit();
             this.toolStripEventsTo.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.ColumnCount = 3;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.AutoSize = true;
+            this.tableLayoutPanel.ColumnCount = 2;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.Controls.Add(this.labelRandomizeColors, 0, 2);
             this.tableLayoutPanel.Controls.Add(this.labelLevelFilename, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.textBoxLevelFilename, 1, 0);
             this.tableLayoutPanel.Controls.Add(this.labelCharacters, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.panelCharacters, 1, 1);
-            this.tableLayoutPanel.Controls.Add(this.groupBoxEventGroups, 0, 2);
-            this.tableLayoutPanel.Controls.Add(this.groupBoxEventsFrom, 2, 2);
-            this.tableLayoutPanel.Controls.Add(this.groupBoxEventsTo, 2, 3);
-            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel.Controls.Add(this.checkBoxRandomzieColors, 1, 2);
+            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 4;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(798, 548);
+            this.tableLayoutPanel.RowCount = 3;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel.Size = new System.Drawing.Size(798, 90);
             this.tableLayoutPanel.TabIndex = 0;
+            // 
+            // labelRandomizeColors
+            // 
+            this.labelRandomizeColors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelRandomizeColors.AutoSize = true;
+            this.labelRandomizeColors.Location = new System.Drawing.Point(3, 68);
+            this.labelRandomizeColors.Name = "labelRandomizeColors";
+            this.labelRandomizeColors.Size = new System.Drawing.Size(94, 13);
+            this.labelRandomizeColors.TabIndex = 5;
+            this.labelRandomizeColors.Text = "Randomize colors:";
             // 
             // labelLevelFilename
             // 
             this.labelLevelFilename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.labelLevelFilename.AutoSize = true;
-            this.labelLevelFilename.Location = new System.Drawing.Point(3, 6);
+            this.labelLevelFilename.Location = new System.Drawing.Point(3, 8);
             this.labelLevelFilename.Name = "labelLevelFilename";
-            this.labelLevelFilename.Size = new System.Drawing.Size(78, 13);
+            this.labelLevelFilename.Size = new System.Drawing.Size(94, 13);
             this.labelLevelFilename.TabIndex = 0;
             this.labelLevelFilename.Text = "Level filename:";
             // 
             // textBoxLevelFilename
             // 
             this.textBoxLevelFilename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.tableLayoutPanel.SetColumnSpan(this.textBoxLevelFilename, 2);
-            this.textBoxLevelFilename.Location = new System.Drawing.Point(87, 3);
+            this.textBoxLevelFilename.Location = new System.Drawing.Point(103, 5);
             this.textBoxLevelFilename.Name = "textBoxLevelFilename";
-            this.textBoxLevelFilename.Size = new System.Drawing.Size(708, 20);
+            this.textBoxLevelFilename.Size = new System.Drawing.Size(692, 20);
             this.textBoxLevelFilename.TabIndex = 1;
             // 
             // labelCharacters
             // 
             this.labelCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.labelCharacters.AutoSize = true;
-            this.labelCharacters.Location = new System.Drawing.Point(3, 32);
+            this.labelCharacters.Location = new System.Drawing.Point(3, 38);
             this.labelCharacters.Name = "labelCharacters";
-            this.labelCharacters.Size = new System.Drawing.Size(78, 13);
+            this.labelCharacters.Size = new System.Drawing.Size(94, 13);
             this.labelCharacters.TabIndex = 2;
             this.labelCharacters.Text = "Characters:";
             // 
             // panelCharacters
             // 
-            this.tableLayoutPanel.SetColumnSpan(this.panelCharacters, 2);
             this.panelCharacters.Controls.Add(this.checkBoxBird);
             this.panelCharacters.Controls.Add(this.checkBoxFrog);
             this.panelCharacters.Controls.Add(this.checkBoxLori);
             this.panelCharacters.Controls.Add(this.checkBoxSpaz);
             this.panelCharacters.Controls.Add(this.checkBoxJazz);
             this.panelCharacters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelCharacters.Location = new System.Drawing.Point(87, 29);
+            this.panelCharacters.Location = new System.Drawing.Point(103, 33);
             this.panelCharacters.Name = "panelCharacters";
-            this.panelCharacters.Size = new System.Drawing.Size(708, 20);
+            this.panelCharacters.Size = new System.Drawing.Size(692, 24);
             this.panelCharacters.TabIndex = 4;
             // 
             // checkBoxBird
@@ -145,7 +156,7 @@
             this.checkBoxBird.Dock = System.Windows.Forms.DockStyle.Left;
             this.checkBoxBird.Location = new System.Drawing.Point(187, 0);
             this.checkBoxBird.Name = "checkBoxBird";
-            this.checkBoxBird.Size = new System.Drawing.Size(44, 20);
+            this.checkBoxBird.Size = new System.Drawing.Size(44, 24);
             this.checkBoxBird.TabIndex = 7;
             this.checkBoxBird.Text = "Bird";
             this.checkBoxBird.UseVisualStyleBackColor = true;
@@ -156,7 +167,7 @@
             this.checkBoxFrog.Dock = System.Windows.Forms.DockStyle.Left;
             this.checkBoxFrog.Location = new System.Drawing.Point(140, 0);
             this.checkBoxFrog.Name = "checkBoxFrog";
-            this.checkBoxFrog.Size = new System.Drawing.Size(47, 20);
+            this.checkBoxFrog.Size = new System.Drawing.Size(47, 24);
             this.checkBoxFrog.TabIndex = 6;
             this.checkBoxFrog.Text = "Frog";
             this.checkBoxFrog.UseVisualStyleBackColor = true;
@@ -167,7 +178,7 @@
             this.checkBoxLori.Dock = System.Windows.Forms.DockStyle.Left;
             this.checkBoxLori.Location = new System.Drawing.Point(97, 0);
             this.checkBoxLori.Name = "checkBoxLori";
-            this.checkBoxLori.Size = new System.Drawing.Size(43, 20);
+            this.checkBoxLori.Size = new System.Drawing.Size(43, 24);
             this.checkBoxLori.TabIndex = 5;
             this.checkBoxLori.Text = "Lori";
             this.checkBoxLori.UseVisualStyleBackColor = true;
@@ -178,7 +189,7 @@
             this.checkBoxSpaz.Dock = System.Windows.Forms.DockStyle.Left;
             this.checkBoxSpaz.Location = new System.Drawing.Point(47, 0);
             this.checkBoxSpaz.Name = "checkBoxSpaz";
-            this.checkBoxSpaz.Size = new System.Drawing.Size(50, 20);
+            this.checkBoxSpaz.Size = new System.Drawing.Size(50, 24);
             this.checkBoxSpaz.TabIndex = 4;
             this.checkBoxSpaz.Text = "Spaz";
             this.checkBoxSpaz.UseVisualStyleBackColor = true;
@@ -189,21 +200,19 @@
             this.checkBoxJazz.Dock = System.Windows.Forms.DockStyle.Left;
             this.checkBoxJazz.Location = new System.Drawing.Point(0, 0);
             this.checkBoxJazz.Name = "checkBoxJazz";
-            this.checkBoxJazz.Size = new System.Drawing.Size(47, 20);
+            this.checkBoxJazz.Size = new System.Drawing.Size(47, 24);
             this.checkBoxJazz.TabIndex = 3;
             this.checkBoxJazz.Text = "Jazz";
             this.checkBoxJazz.UseVisualStyleBackColor = true;
             // 
             // groupBoxEventGroups
             // 
-            this.tableLayoutPanel.SetColumnSpan(this.groupBoxEventGroups, 2);
             this.groupBoxEventGroups.Controls.Add(this.dataGridViewEventGroups);
             this.groupBoxEventGroups.Controls.Add(this.toolStripEventGroups);
-            this.groupBoxEventGroups.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBoxEventGroups.Location = new System.Drawing.Point(3, 55);
+            this.groupBoxEventGroups.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBoxEventGroups.Location = new System.Drawing.Point(0, 90);
             this.groupBoxEventGroups.Name = "groupBoxEventGroups";
-            this.tableLayoutPanel.SetRowSpan(this.groupBoxEventGroups, 2);
-            this.groupBoxEventGroups.Size = new System.Drawing.Size(250, 490);
+            this.groupBoxEventGroups.Size = new System.Drawing.Size(250, 458);
             this.groupBoxEventGroups.TabIndex = 5;
             this.groupBoxEventGroups.TabStop = false;
             this.groupBoxEventGroups.Text = "Event groups";
@@ -225,7 +234,7 @@
             this.dataGridViewEventGroups.Name = "dataGridViewEventGroups";
             this.dataGridViewEventGroups.RowHeadersVisible = false;
             this.dataGridViewEventGroups.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewEventGroups.Size = new System.Drawing.Size(244, 446);
+            this.dataGridViewEventGroups.Size = new System.Drawing.Size(244, 414);
             this.dataGridViewEventGroups.TabIndex = 1;
             this.dataGridViewEventGroups.SelectionChanged += new System.EventHandler(this.DataGridViewEventGroups_SelectionChanged);
             // 
@@ -279,9 +288,9 @@
             this.groupBoxEventsFrom.Controls.Add(this.toolStripEventsFrom);
             this.groupBoxEventsFrom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxEventsFrom.Enabled = false;
-            this.groupBoxEventsFrom.Location = new System.Drawing.Point(259, 55);
+            this.groupBoxEventsFrom.Location = new System.Drawing.Point(3, 3);
             this.groupBoxEventsFrom.Name = "groupBoxEventsFrom";
-            this.groupBoxEventsFrom.Size = new System.Drawing.Size(536, 242);
+            this.groupBoxEventsFrom.Size = new System.Drawing.Size(539, 223);
             this.groupBoxEventsFrom.TabIndex = 6;
             this.groupBoxEventsFrom.TabStop = false;
             this.groupBoxEventsFrom.Text = "Turn these events...";
@@ -302,7 +311,7 @@
             this.dataGridViewEventsFrom.Name = "dataGridViewEventsFrom";
             this.dataGridViewEventsFrom.RowHeadersVisible = false;
             this.dataGridViewEventsFrom.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewEventsFrom.Size = new System.Drawing.Size(530, 198);
+            this.dataGridViewEventsFrom.Size = new System.Drawing.Size(533, 179);
             this.dataGridViewEventsFrom.TabIndex = 2;
             // 
             // ColumnFromEventId
@@ -327,7 +336,7 @@
             this.toolStripButtonDeleteFromEvent});
             this.toolStripEventsFrom.Location = new System.Drawing.Point(3, 16);
             this.toolStripEventsFrom.Name = "toolStripEventsFrom";
-            this.toolStripEventsFrom.Size = new System.Drawing.Size(530, 25);
+            this.toolStripEventsFrom.Size = new System.Drawing.Size(533, 25);
             this.toolStripEventsFrom.TabIndex = 1;
             this.toolStripEventsFrom.Text = "toolStrip2";
             // 
@@ -355,9 +364,9 @@
             this.groupBoxEventsTo.Controls.Add(this.toolStripEventsTo);
             this.groupBoxEventsTo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxEventsTo.Enabled = false;
-            this.groupBoxEventsTo.Location = new System.Drawing.Point(259, 303);
+            this.groupBoxEventsTo.Location = new System.Drawing.Point(3, 232);
             this.groupBoxEventsTo.Name = "groupBoxEventsTo";
-            this.groupBoxEventsTo.Size = new System.Drawing.Size(536, 242);
+            this.groupBoxEventsTo.Size = new System.Drawing.Size(539, 223);
             this.groupBoxEventsTo.TabIndex = 7;
             this.groupBoxEventsTo.TabStop = false;
             this.groupBoxEventsTo.Text = "...into any of these events:";
@@ -378,7 +387,7 @@
             this.dataGridViewEventsTo.Name = "dataGridViewEventsTo";
             this.dataGridViewEventsTo.RowHeadersVisible = false;
             this.dataGridViewEventsTo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewEventsTo.Size = new System.Drawing.Size(530, 198);
+            this.dataGridViewEventsTo.Size = new System.Drawing.Size(533, 179);
             this.dataGridViewEventsTo.TabIndex = 3;
             // 
             // ColumnToEventId
@@ -403,7 +412,7 @@
             this.toolStripButtonDeleteToEvent});
             this.toolStripEventsTo.Location = new System.Drawing.Point(3, 16);
             this.toolStripEventsTo.Name = "toolStripEventsTo";
-            this.toolStripEventsTo.Size = new System.Drawing.Size(530, 25);
+            this.toolStripEventsTo.Size = new System.Drawing.Size(533, 25);
             this.toolStripEventsTo.TabIndex = 2;
             this.toolStripEventsTo.Text = "toolStrip3";
             // 
@@ -425,10 +434,47 @@
             this.toolStripButtonDeleteToEvent.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonDeleteToEvent.Click += new System.EventHandler(this.ToolStripButtonDeleteToEvent_Click);
             // 
+            // splitter
+            // 
+            this.splitter.Location = new System.Drawing.Point(250, 90);
+            this.splitter.Name = "splitter";
+            this.splitter.Size = new System.Drawing.Size(3, 458);
+            this.splitter.TabIndex = 4;
+            this.splitter.TabStop = false;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.groupBoxEventsTo, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.groupBoxEventsFrom, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(253, 90);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(545, 458);
+            this.tableLayoutPanel1.TabIndex = 3;
+            // 
+            // checkBoxRandomzieColors
+            // 
+            this.checkBoxRandomzieColors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxRandomzieColors.AutoSize = true;
+            this.checkBoxRandomzieColors.Location = new System.Drawing.Point(103, 68);
+            this.checkBoxRandomzieColors.Name = "checkBoxRandomzieColors";
+            this.checkBoxRandomzieColors.Size = new System.Drawing.Size(692, 14);
+            this.checkBoxRandomzieColors.TabIndex = 6;
+            this.checkBoxRandomzieColors.UseVisualStyleBackColor = true;
+            // 
             // LevelSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.splitter);
+            this.Controls.Add(this.groupBoxEventGroups);
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "LevelSettingsControl";
             this.Size = new System.Drawing.Size(798, 548);
@@ -451,7 +497,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewEventsTo)).EndInit();
             this.toolStripEventsTo.ResumeLayout(false);
             this.toolStripEventsTo.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -488,5 +536,9 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn ColumnFromDifficulty;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnToEventId;
         private System.Windows.Forms.DataGridViewComboBoxColumn ColumnToDifficulty;
+        private System.Windows.Forms.Splitter splitter;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label labelRandomizeColors;
+        private System.Windows.Forms.CheckBox checkBoxRandomzieColors;
     }
 }

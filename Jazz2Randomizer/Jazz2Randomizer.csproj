@@ -65,7 +65,6 @@
     <Compile Include="EventInfo.cs" />
     <Compile Include="EventGroup.cs" />
     <Compile Include="Jazz2.cs" />
-    <Compile Include="LevelInfo.cs" />
     <Compile Include="LevelSettings.cs" />
     <Compile Include="LevelSettingsControl.cs">
       <SubType>UserControl</SubType>
